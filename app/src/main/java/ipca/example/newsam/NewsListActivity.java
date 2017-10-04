@@ -36,49 +36,17 @@ public class NewsListActivity extends AppCompatActivity {
         setTitle(title);
         //textViewText.setText(url);
 
-        new AsyncTask<String, Void, String>() {
 
-
+        HttpFetchData httpFetchData=new HttpFetchData();
+        httpFetchData.setOnHttpResponse(new HttpListener() {
             @Override
-            protected String doInBackground(String... strings) {
-
-                String result="";
-                HttpURLConnection urlConnection = null;
-                try {
-                    URL url=new URL(strings[0]);
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setReadTimeout(10000);
-                    urlConnection.setConnectTimeout(15000);
-                    urlConnection.setRequestMethod("GET");
-
-
-                    InputStream inputStream = urlConnection.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    StringBuilder total = new StringBuilder();
-                    String line;
-                    while ((line =  bufferedReader.readLine())!=null){
-                        total.append(line).append('\n');
-                    }
-                    result = total.toString();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }finally {
-                    urlConnection.disconnect();
-                }
-
-                return result;
+            public void onHttpResponse(String webText) {
+                textViewText.setText(webText);
             }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                textViewText.setText(s);
-            }
+        });
+        httpFetchData.execute(urlString,null,null);
 
 
-        }.execute(urlString,null,null);
 
 
 
