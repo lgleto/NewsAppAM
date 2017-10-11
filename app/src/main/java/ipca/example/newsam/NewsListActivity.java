@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -95,6 +96,9 @@ public class NewsListActivity extends AppCompatActivity {
             }
             TextView textView = (TextView)view.findViewById(R.id.textViewPostRow);
             textView.setText(postList.get(i).getTitle());
+
+            ImageView imageView= (ImageView) view.findViewById(R.id.imageView);
+            //imageView.setImageBitmap();
 
             view.setTag(new Integer(i));
             view.setClickable(true);

@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="90dp">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical"/>
 
     <TextView
         android:id="@+id/textViewPostRow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Post title"
-        android:gravity="center_vertical"
-        android:textSize="24sp"
+        android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"/>
+        android:gravity="center_vertical"
+        android:text="Post title"
+        android:textSize="24sp" />
 
 </LinearLayout>
