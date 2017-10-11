@@ -1,7 +1,13 @@
 package ipca.example.newsam;
 
 import android.os.AsyncTask;
+import android.provider.DocumentsContract;
 import android.util.Log;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,11 +19,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 /**
  * Created by lourenco on 04/10/17.
  */
 
-public class HttpFetchData extends AsyncTask <String, Void, String>{
+public class HttpFetchData extends AsyncTask <String, Void, List<Post>>{
 
     List listeners=new ArrayList();
 
@@ -29,16 +39,18 @@ public class HttpFetchData extends AsyncTask <String, Void, String>{
         listeners.remove(httpListener);
     }
 
-    private synchronized void fireSuccessHttpResponse(String s){
+    private synchronized void fireSuccessHttpResponse(List<Post> posts){
         for (Object l:listeners){
             HttpListener httpListener=(HttpListener) l;
-            httpListener.onHttpResponse(s);
+            httpListener.onHttpResponse(posts);
         }
     }
 
     @Override
-    protected String doInBackground(String... strings) {
-        String result="";
+    protected List<Post> doInBackground(String... strings) {
+
+        List<Post> postList=new ArrayList<>();
+
         HttpURLConnection urlConnection = null;
         try {
             URL url=new URL(strings[0]);
@@ -48,30 +60,45 @@ public class HttpFetchData extends AsyncTask <String, Void, String>{
             urlConnection.setRequestMethod("GET");
 
 
+            DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder=factory.newDocumentBuilder();
             InputStream inputStream = urlConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder total = new StringBuilder();
-            String line;
-            while ((line =  bufferedReader.readLine())!=null){
-                total.append(line).append('\n');
+            Document doc=builder.parse(inputStream);
+
+            NodeList nodeList=doc.getElementsByTagName("item");
+            for (int i=0; i < nodeList.getLength(); i++){
+
+                Element element=(Element)nodeList.item(i);
+                NodeList nodeTitle=element.getElementsByTagName("title");
+                String strTitle= nodeTitle.item(0).getTextContent();
+                NodeList nodeUrl=element.getElementsByTagName("guid");
+                String strUrl= nodeUrl.item(0).getTextContent();
+                Post post=new Post(strTitle,strUrl);
+
+                postList.add(post);
             }
-            result = total.toString();
+
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } finally {
             urlConnection.disconnect();
         }
 
-        return result;
+        return postList;
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+    protected void onPostExecute(List<Post> posts) {
+        super.onPostExecute(posts);
         //textViewText.setText(s);
         //Log.d("newsam",s);
-        fireSuccessHttpResponse(s);
+        fireSuccessHttpResponse(posts);
     }
 }
