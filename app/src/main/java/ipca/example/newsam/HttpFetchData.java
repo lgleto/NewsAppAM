@@ -71,7 +71,7 @@ public class HttpFetchData extends AsyncTask <String, Void, List<Post>>{
                 Element element=(Element)nodeList.item(i);
                 NodeList nodeTitle=element.getElementsByTagName("title");
                 String strTitle= nodeTitle.item(0).getTextContent();
-                NodeList nodeUrl=element.getElementsByTagName("guid");
+                NodeList nodeUrl=element.getElementsByTagName("link");
                 String strUrl= nodeUrl.item(0).getTextContent();
                 Post post=new Post(strTitle,strUrl);
 

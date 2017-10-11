@@ -34,13 +34,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.buttonPublico:
                 intent.putExtra(NewsListActivity.NEWS_PAPER_TITLE, "Publico");
                 intent.putExtra(NewsListActivity.NEWS_PAPER_URL, "https://feeds.feedburner.com/PublicoRSS");
-
-                startActivity(intent);
                 break;
             case R.id.buttonObservador:
+                intent.putExtra(NewsListActivity.NEWS_PAPER_TITLE, "Observador");
+                intent.putExtra(NewsListActivity.NEWS_PAPER_URL, "http://feeds.feedburner.com/obs-ultimas");
                 break;
             case R.id.buttonRecord:
+                intent.putExtra(NewsListActivity.NEWS_PAPER_TITLE, "Record");
+                intent.putExtra(NewsListActivity.NEWS_PAPER_URL, "http://www.record.pt/rss.aspx");
                 break;
         }
+        startActivity(intent);
     }
 }
