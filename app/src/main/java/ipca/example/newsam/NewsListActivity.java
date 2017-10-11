@@ -1,10 +1,12 @@
 package ipca.example.newsam;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +65,7 @@ public class NewsListActivity extends AppCompatActivity {
 
     }
 
-    class PostAdapter extends BaseAdapter {
+    class PostAdapter extends BaseAdapter implements View.OnClickListener{
 
         LayoutInflater layoutInflater;
 
@@ -94,7 +96,26 @@ public class NewsListActivity extends AppCompatActivity {
             TextView textView = (TextView)view.findViewById(R.id.textViewPostRow);
             textView.setText(postList.get(i).getTitle());
 
+            view.setTag(new Integer(i));
+            view.setClickable(true);
+            view.setOnClickListener(this);
+
+
+
             return view;
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = (Integer) view.getTag();
+
+            Log.d("newsam", postList.get(position).getTitle() );
+
+            Intent intent = new Intent(NewsListActivity.this, WebViewActivity.class);
+            intent.putExtra(NEWS_PAPER_TITLE,postList.get(position).getTitle());
+            intent.putExtra(NEWS_PAPER_URL,postList.get(position).getUrl());
+            startActivity(intent);
+
         }
     }
 
