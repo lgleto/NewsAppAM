@@ -2,6 +2,8 @@ package ipca.example.newsam;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -97,14 +99,28 @@ public class NewsListActivity extends AppCompatActivity {
             TextView textView = (TextView)view.findViewById(R.id.textViewPostRow);
             textView.setText(postList.get(i).getTitle());
 
-            ImageView imageView= (ImageView) view.findViewById(R.id.imageView);
-            //imageView.setImageBitmap();
+            final ImageView imageView= (ImageView) view.findViewById(R.id.imageView);
+
+
+            new AsyncTask<String,Void,Bitmap>(){
+
+                @Override
+                protected Bitmap doInBackground(String... strings) {
+                    Bitmap bm=getBitmapFromURL(strings[0]);
+                    return bm;
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap bitmap) {
+                    super.onPostExecute(bitmap);
+                    imageView.setImageBitmap(bitmap);
+
+                }
+            }.execute(postList.get(i).getImageLink(),null,null);
 
             view.setTag(new Integer(i));
             view.setClickable(true);
             view.setOnClickListener(this);
-
-
 
             return view;
         }
@@ -120,6 +136,20 @@ public class NewsListActivity extends AppCompatActivity {
             intent.putExtra(NEWS_PAPER_URL,postList.get(position).getUrl());
             startActivity(intent);
 
+        }
+    }
+
+    Bitmap getBitmapFromURL(String src) {
+        try { URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
